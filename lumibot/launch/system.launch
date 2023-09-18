@@ -1,0 +1,44 @@
+
+<launch>
+
+    <!-- Tag parameters -->
+    <arg name="marker_size" default="20.0" />
+    <arg name="max_new_marker_error" default="0.08" />
+    <arg name="max_track_error" default="0.2" />
+    <arg name="cam_image_topic" default="/camera/image_raw" />
+    <arg name="cam_info_topic" default="/camera/info" />
+    <arg name="output_frame" default="/kinect_rgb" />
+
+    <node 
+        pkg="tf" 
+        type="static_transform_publisher" 
+        name="base_camera_broadcaster" 
+        args="0 0 0 0 0 -1.57 base_link kinect_rgb 30" />
+
+    <node
+        pkg="teleop_twist_keyboard"
+        type="teleop_twist_keyboard.py"
+        name="teleop_twist_keyboard"
+        output="screen"/>
+
+    <node 
+        pkg="rqt_tf_tree" 
+        type="rqt_tf_tree" 
+        name="rqt_tf_tree"/>
+
+    <node 
+        pkg="lumibot" 
+        type="camera_info.py" 
+        name="camera_info_publisher"/>
+
+    <node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen">
+        <param name="marker_size"           type="double" value="$(arg marker_size)" />
+        <param name="max_new_marker_error"  type="double" value="$(arg max_new_marker_error)" />
+        <param name="max_track_error"       type="double" value="$(arg max_track_error)" />
+        <param name="output_frame"          type="string" value="$(arg output_frame)" />
+
+        <remap from="camera_image"  to="$(arg cam_image_topic)" />
+        <remap from="camera_info"   to="$(arg cam_info_topic)" />
+    </node>
+
+</launch>
