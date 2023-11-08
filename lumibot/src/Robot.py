@@ -93,6 +93,12 @@ class Robot():
         for m, r in move:
             self.move(m[0], m[1], m[2])
             self.rotate(r[0], r[1], r[2])
+
+    def get_distance(self, goal_x, goal_y):
+        return sqrt(pow((goal_x - self.pose.x), 2) + pow((goal_y - self.pose.y), 2))
+    
+    def get_angle_to_goal(self, goal_x, goal_y):
+        return atan2(goal_y - self.pose.y, goal_x - self.pose.x)
     
     def move2goal(self):
         goal_pose = Pose()
